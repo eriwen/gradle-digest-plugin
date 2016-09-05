@@ -1,0 +1,15 @@
+=== Usage
+
+....
+plugins {
+  id: 'com.eriwen.gradle.digest'
+}
+
+task digest(type: com.eriwen.gradle.Digest) {
+  source "dir"
+  dest "$buildDir/digest"
+}
+....
+
+`$ gradle digest`
+
