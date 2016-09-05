@@ -1,0 +1,34 @@
+sourceSets {
+    functionalTest {
+        groovy.srcDir file("src/functTest/groovy")
+        resources.srcDir file("src/functTest/resources")
+        compileClasspath += sourceSets.main.output + configurations.testRuntime
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
+dependencies {
+    functionalTestCompile gradleTestKit()
+}
+
+task functionalTest(type: Test, group: "verification", description: "Runs the functional tests.") {
+    testClassesDir = sourceSets.functionalTest.output.classesDir
+    classpath = sourceSets.functionalTest.runtimeClasspath
+    mustRunAfter test, integrationTest
+
+    reports {
+        html.destination = project.file("$html.destination/functional")
+        junitXml.destination = project.file("$junitXml.destination/functional")
+    }
+}
+
+check.dependsOn functionalTest
+
+idea.module {
+    sourceSets.functionalTest.allSource.srcDirs.each {
+        testSourceDirs += it
+    }
+
+    scopes.TEST.plus += [configurations.functionalTestCompile]
+    scopes.TEST.plus += [configurations.functionalTestRuntime]
+}
