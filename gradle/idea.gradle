@@ -1,0 +1,19 @@
+apply plugin: "idea"
+
+idea.project {
+    jdkName = "1.8"
+    languageLevel = compatibilityVersion
+    vcs = "Git"
+
+    ipr.withXml { provider ->
+        def node = provider.asNode()
+
+        // Set Gradle home
+        def gradleSettings = node.appendNode("component", [name: "GradleSettings"])
+        gradleSettings.appendNode("option", [name: "SDK_HOME", value: gradle.gradleHomeDir.absolutePath])
+
+        // set compiler heap space
+        def javacSettings = node.appendNode("component", [name: "JavacSettings"])
+        javacSettings.appendNode("option", [name: "MAXIMUM_HEAP_SIZE", value: "256"])
+    }
+}

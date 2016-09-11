@@ -25,10 +25,12 @@ import org.gradle.api.tasks.SourceTask;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs;
 import org.gradle.api.tasks.incremental.InputFileDetails;
+import org.gradle.api.tasks.util.PatternSet;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Digest extends SourceTask {
     @Input
@@ -58,16 +60,21 @@ public class Digest extends SourceTask {
         return getProject().file(file.getParent() + File.separator + digest + "-" + file.getName());
     }
 
-    // TODO(ew): Accept a File instead of FileVisitDetails for incremental I/O
-    private void digest(final FileVisitDetails visitDetails, final DigestAlgorithm algorithm) throws IOException {
-        final String checksum = DigestUtils.md5Hex(Files.readAllBytes(visitDetails.getFile().toPath()));
-        final File destFile = visitDetails.getRelativePath().getFile(dest);
-        visitDetails.copyTo(digestedFile(destFile, checksum));
-        Files.write(checksumFile(destFile, algorithm).toPath(), checksum.getBytes());
+    private byte[] digest(final File file, final DigestAlgorithm algorithm) throws IOException {
+        final byte[] contentBytes = Files.readAllBytes(file.toPath());
+        final byte[] checksum;
+        switch (algorithm) {
+            case MD5: checksum = DigestUtils.md5Hex(contentBytes).getBytes(); break;
+            case SHA1: checksum = DigestUtils.sha1(contentBytes); break;
+            case SHA256: checksum = DigestUtils.sha256(contentBytes); break;
+            case SHA512: checksum = DigestUtils.sha512(contentBytes); break;
+            default: throw new IllegalArgumentException("Cannot use unknown digest algorithm " + algorithm.toString());
+        }
+        return checksum;
     }
 
     @TaskAction
-    void run() {
+    void processChanges() {
         getSource().visit(new FileVisitor() {
             @Override
             public void visitDir(FileVisitDetails visitDetails) {
@@ -77,7 +84,10 @@ public class Digest extends SourceTask {
             @Override
             public void visitFile(FileVisitDetails visitDetails) {
                 try {
-                    digest(visitDetails, DigestAlgorithm.valueOf(algorithm));
+                    byte[] checksum = digest(visitDetails.getFile(), DigestAlgorithm.valueOf(algorithm));
+                    final File destFile = visitDetails.getRelativePath().getFile(dest);
+                    visitDetails.copyTo(digestedFile(destFile, new String(checksum)));
+                    Files.write(checksumFile(destFile, DigestAlgorithm.valueOf(algorithm)).toPath(), checksum);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -95,14 +105,17 @@ public class Digest extends SourceTask {
             getProject().delete((Object) dest.listFiles());
         }
 
+        final PatternSet patternSet = new PatternSet();
+
         inputs.outOfDate(new Action<InputFileDetails>() {
             @Override
-            public void execute(InputFileDetails inputFileDetails) {
+            public void execute(final InputFileDetails inputFileDetails) {
                 if (inputFileDetails.isModified() || inputFileDetails.isRemoved()) {
                     deleteOutputsFor(inputFileDetails.getFile());
                 }
                 if (inputFileDetails.isAdded() || inputFileDetails.isModified()) {
-//                    digest(inputFileDetails.getFile(), DigestAlgorithm.MD5);
+                    // TODO(ew): patternSet.include()
+                    Paths.get(inputFileDetails.getFile().toURI());
                 }
             }
         });
@@ -112,5 +125,7 @@ public class Digest extends SourceTask {
                 deleteOutputsFor(inputFileDetails.getFile());
             }
         });
+
+        // TODO(ew): processChanges(getSource().matching(patternSet));
     }
 }

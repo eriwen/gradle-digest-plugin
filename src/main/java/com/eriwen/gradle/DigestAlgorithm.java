@@ -16,7 +16,7 @@
 package com.eriwen.gradle;
 
 public enum DigestAlgorithm {
-    MD5, SHA256, SHA512;
+    MD5, SHA1, SHA256, SHA512;
 
     public String suffix() {
         return toString().toLowerCase();

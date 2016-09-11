@@ -25,11 +25,13 @@ publishing {
                 license.appendNode("distribution", "repo")
 
                 def developers = root.appendNode("developers")
-                def bmuschko = developers.appendNode("developer")
-                bmuschko.appendNode("id", "eriwen")
-                bmuschko.appendNode("name", "Eric Wendelin")
-                bmuschko.appendNode("email", "me@eriwen.com")
+                def developer = developers.appendNode("developer")
+                developer.appendNode("id", "eriwen")
+                developer.appendNode("name", "Eric Wendelin")
+                developer.appendNode("email", "me@eriwen.com")
             }
         }
     }
 }
+
+task install(dependsOn: 'publishToMavenLocal', description: 'Installs plugin to local repo')
