@@ -1,6 +1,5 @@
 package com.eriwen.gradle
 
-import groovy.transform.NotYetImplemented
 import org.apache.commons.codec.digest.DigestUtils
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
@@ -66,8 +65,8 @@ class DigestPluginFunctionalTest extends Specification {
 
         buildFile << """
             task digest(type: com.eriwen.gradle.Digest) {
-                source "${projectPath}/foo"
-                dest "${projectPath}/build"
+                source = "${projectPath}/foo"
+                dest = "${projectPath}/build"
             }
 """
 
@@ -80,11 +79,28 @@ class DigestPluginFunctionalTest extends Specification {
         new File("${projectPath}/build/bar/baz.js.md5").exists()
     }
 
-    @NotYetImplemented
-    def "digest algorithm is configurable"() {}
+    def "digest algorithm is configurable"() {
+        given:
+        testProjectDir.newFolder("path")
+        testProjectDir.newFile("path/a.js") << "a"
+        String projectPath = testProjectDir.root.absolutePath
 
-    @NotYetImplemented
-    def "only files that change are reprocessed"() {}
+        buildFile << """
+            task digest(type: com.eriwen.gradle.Digest) {
+                source "${projectPath}/path"
+                dest "${projectPath}/build"
+                algorithm = "SHA1"
+            }
+"""
+
+        when:
+        BuildResult result = execute("digest")
+
+        then:
+        result.task(":digest").outcome == SUCCESS
+        new File("${projectPath}/build/a.js.sha1").exists()
+        new File("${projectPath}/build/86f7e437faa5a7fce15d1ddcb9eaeaea377667b8-a.js").exists()
+    }
 
     private BuildResult execute(String arguments) {
         GradleRunner.create()

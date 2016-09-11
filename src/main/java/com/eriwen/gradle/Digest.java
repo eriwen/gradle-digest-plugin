@@ -17,6 +17,7 @@ package com.eriwen.gradle;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.gradle.api.Action;
+import org.gradle.api.file.FileTree;
 import org.gradle.api.file.FileVisitDetails;
 import org.gradle.api.file.FileVisitor;
 import org.gradle.api.tasks.Input;
@@ -34,10 +35,10 @@ import java.nio.file.Paths;
 
 public class Digest extends SourceTask {
     @Input
-    private String algorithm = DigestAlgorithm.MD5.toString();
+    public String algorithm = DigestAlgorithm.MD5.toString();
 
     @OutputDirectory
-    private File dest;
+    public File dest;
 
     // Allow flexible user input
     public void setDest(final String input) {
@@ -52,54 +53,13 @@ public class Digest extends SourceTask {
         this.dest = input;
     }
 
-    private File checksumFile(final File destFile, final DigestAlgorithm algorithm) {
-        return getProject().file(destFile.getAbsolutePath() + "." + algorithm.suffix());
-    }
-
-    private File digestedFile(final File file, final String digest) {
-        return getProject().file(file.getParent() + File.separator + digest + "-" + file.getName());
-    }
-
-    private byte[] digest(final File file, final DigestAlgorithm algorithm) throws IOException {
-        final byte[] contentBytes = Files.readAllBytes(file.toPath());
-        final byte[] checksum;
-        switch (algorithm) {
-            case MD5: checksum = DigestUtils.md5Hex(contentBytes).getBytes(); break;
-            case SHA1: checksum = DigestUtils.sha1(contentBytes); break;
-            case SHA256: checksum = DigestUtils.sha256(contentBytes); break;
-            case SHA512: checksum = DigestUtils.sha512(contentBytes); break;
-            default: throw new IllegalArgumentException("Cannot use unknown digest algorithm " + algorithm.toString());
-        }
-        return checksum;
-    }
-
     @TaskAction
-    void processChanges() {
-        getSource().visit(new FileVisitor() {
-            @Override
-            public void visitDir(FileVisitDetails visitDetails) {
-                visitDetails.getRelativePath().getFile(dest).mkdir();
-            }
-
-            @Override
-            public void visitFile(FileVisitDetails visitDetails) {
-                try {
-                    byte[] checksum = digest(visitDetails.getFile(), DigestAlgorithm.valueOf(algorithm));
-                    final File destFile = visitDetails.getRelativePath().getFile(dest);
-                    visitDetails.copyTo(digestedFile(destFile, new String(checksum)));
-                    Files.write(checksumFile(destFile, DigestAlgorithm.valueOf(algorithm)).toPath(), checksum);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
+    void run() {
+        processChanges(getSource());
     }
 
-    private void deleteOutputsFor(final File file) {
-        file.delete();
-        new File(file.getAbsolutePath() + "." + DigestAlgorithm.valueOf(algorithm).suffix()).delete();
-    }
-
+    // FIXME: implement incremental SourceTask that preserves structure of sources
+    // Error: Neither path nor baseDir may be null or empty string.
     void executeIncremental(IncrementalTaskInputs inputs) {
         if (!inputs.isIncremental()) {
             getProject().delete((Object) dest.listFiles());
@@ -114,8 +74,8 @@ public class Digest extends SourceTask {
                     deleteOutputsFor(inputFileDetails.getFile());
                 }
                 if (inputFileDetails.isAdded() || inputFileDetails.isModified()) {
-                    // TODO(ew): patternSet.include()
-                    Paths.get(inputFileDetails.getFile().toURI());
+                    // TODO: Figure out what to include here such that we include the right pattern for exactly this input file
+                    patternSet.include(Paths.get(inputFileDetails.getFile().toURI()).toFile().getAbsolutePath());
                 }
             }
         });
@@ -126,6 +86,53 @@ public class Digest extends SourceTask {
             }
         });
 
-        // TODO(ew): processChanges(getSource().matching(patternSet));
+        processChanges(getSource().matching(patternSet));
+    }
+
+    private void processChanges(final FileTree sourceTree) {
+        sourceTree.visit(new FileVisitor() {
+            @Override
+            public void visitDir(FileVisitDetails visitDetails) {
+                visitDetails.getRelativePath().getFile(dest).mkdir();
+            }
+
+            @Override
+            public void visitFile(FileVisitDetails visitDetails) {
+                try {
+                    String checksum = digest(visitDetails.getFile(), DigestAlgorithm.valueOf(algorithm));
+                    final File destFile = visitDetails.getRelativePath().getFile(dest);
+                    visitDetails.copyTo(digestedFile(destFile, checksum));
+                    Files.write(checksumFile(destFile, DigestAlgorithm.valueOf(algorithm)).toPath(), checksum.getBytes());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+    }
+
+    private String digest(final File file, final DigestAlgorithm algorithm) throws IOException {
+        final byte[] contentBytes = Files.readAllBytes(file.toPath());
+        final String checksum;
+        switch (algorithm) {
+            case MD5: checksum = DigestUtils.md5Hex(contentBytes); break;
+            case SHA1: checksum = DigestUtils.sha1Hex(contentBytes); break;
+            case SHA256: checksum = DigestUtils.sha256Hex(contentBytes); break;
+            case SHA512: checksum = DigestUtils.sha512Hex(contentBytes); break;
+            default: throw new IllegalArgumentException("Cannot use unknown digest algorithm " + algorithm.toString());
+        }
+        return checksum;
+    }
+
+    private File checksumFile(final File destFile, final DigestAlgorithm algorithm) {
+        return getProject().file(destFile.getAbsolutePath() + "." + algorithm.suffix());
+    }
+
+    private File digestedFile(final File file, final String digest) {
+        return getProject().file(file.getParent() + File.separator + digest + "-" + file.getName());
+    }
+
+    private void deleteOutputsFor(final File file) {
+        file.delete();
+        new File(file.getAbsolutePath() + "." + DigestAlgorithm.valueOf(algorithm).suffix()).delete();
     }
 }
