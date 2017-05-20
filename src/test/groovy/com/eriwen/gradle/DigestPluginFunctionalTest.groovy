@@ -7,8 +7,8 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
+import static org.gradle.testkit.runner.TaskOutcome.NO_SOURCE
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
-import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 
 class DigestPluginFunctionalTest extends Specification {
     @Rule final TemporaryFolder testProjectDir = new TemporaryFolder()
@@ -31,7 +31,7 @@ class DigestPluginFunctionalTest extends Specification {
         BuildResult result = execute("digest")
 
         then:
-        result.task(":digest").outcome == UP_TO_DATE
+        result.task(":digest").outcome == NO_SOURCE
     }
 
     def "hashes files using MD5 algorithm by default"() {
