@@ -26,7 +26,7 @@ apply {
 
 plugins {
     `build-scan`
-    kotlin("jvm") version "1.1.4-3"
+    kotlin("jvm", "1.1.4-3")
     `java-gradle-plugin`
     `maven-publish`
     id("com.gradle.plugin-publish") version "0.9.7"
