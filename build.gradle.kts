@@ -24,6 +24,11 @@ apply {
     plugin("org.jetbrains.dokka")
 }
 
+group = "com.eriwen"
+version = "0.0.3"
+
+
+
 plugins {
     `build-scan`
     kotlin("jvm", "1.1.4-3")
@@ -31,9 +36,6 @@ plugins {
     `maven-publish`
     id("com.gradle.plugin-publish") version "0.9.7"
 }
-
-group = "com.eriwen"
-version = "0.0.3"
 
 repositories {
     jcenter()
