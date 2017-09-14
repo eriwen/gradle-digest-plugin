@@ -15,7 +15,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath("org.junit.platform:junit-platform-gradle-plugin:1.0.0-RC3")
+        classpath("org.junit.platform:junit-platform-gradle-plugin:1.0.0")
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.9.15")
     }
 }
@@ -40,7 +40,7 @@ repositories {
 }
 
 val kotlinVersion = "1.1.4-3"
-val junitPlatformVersion = "1.0.0-RC3"
+val junitPlatformVersion = "1.0.0"
 val spekVersion = "1.1.4"
 
 dependencies {
