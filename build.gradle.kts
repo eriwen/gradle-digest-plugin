@@ -27,11 +27,9 @@ apply {
 group = "com.eriwen"
 version = "0.0.3"
 
-
-
 plugins {
     `build-scan`
-    kotlin("jvm", "1.1.4-3")
+    kotlin("jvm", "1.1.50")
     `java-gradle-plugin`
     `maven-publish`
     id("com.gradle.plugin-publish") version "0.9.7"
@@ -41,9 +39,9 @@ repositories {
     jcenter()
 }
 
-val kotlinVersion = "1.1.4-3"
+val kotlinVersion = "1.1.50"
 val junitPlatformVersion = "1.0.0"
-val spekVersion = "1.1.4"
+val spekVersion = "1.1.5"
 
 dependencies {
     implementation(kotlin("stdlib-jre8", kotlinVersion))
