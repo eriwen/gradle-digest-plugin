@@ -29,10 +29,10 @@ version = "0.0.3"
 
 plugins {
     `build-scan`
-    kotlin("jvm", "1.1.50")
+    kotlin("jvm") version "1.1.51"
     `java-gradle-plugin`
     `maven-publish`
-    id("com.gradle.plugin-publish") version "0.9.7"
+    id("com.gradle.plugin-publish") version "0.9.8"
 }
 
 repositories {
