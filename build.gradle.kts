@@ -28,8 +28,8 @@ group = "com.eriwen"
 version = "0.0.3"
 
 plugins {
-    `build-scan`
-    kotlin("jvm") version "1.1.51"
+    id("com.gradle.build-scan") version "1.11"
+    kotlin("jvm") version "1.2.20"
     `java-gradle-plugin`
     `maven-publish`
     id("com.gradle.plugin-publish") version "0.9.8"
@@ -39,7 +39,7 @@ repositories {
     jcenter()
 }
 
-val kotlinVersion = "1.1.50"
+val kotlinVersion = "1.2.20"
 val junitPlatformVersion = "1.0.0"
 val spekVersion = "1.1.5"
 
@@ -95,7 +95,7 @@ artifacts.add("archives", sourcesJar)
 
 val jar by tasks.getting(Jar::class) {
     manifest.attributes.apply {
-        put("Implementation-Title", "Gradle Digest plugin")
+        put("Implementation-Title", "Gradle Digest Plugin")
         put("Implementation-Version", project.version)
         put("Built-By", System.getProperty("user.name"))
         put("Built-JDK", System.getProperty("java.version"))
