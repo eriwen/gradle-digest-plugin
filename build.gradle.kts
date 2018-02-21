@@ -63,7 +63,6 @@ dependencies {
 buildScan {
     setTermsOfServiceUrl("https://gradle.com/terms-of-service")
     setTermsOfServiceAgree("yes")
-    setServer("https://e.grdev.net")
 
     publishAlways()
 }
