@@ -28,18 +28,18 @@ group = "com.eriwen"
 version = "0.0.3"
 
 plugins {
-    id("com.gradle.build-scan") version "1.11"
-    kotlin("jvm") version "1.2.20"
+    id("com.gradle.build-scan") version "1.12.1"
+    kotlin("jvm") version "1.2.21"
     `java-gradle-plugin`
     `maven-publish`
-    id("com.gradle.plugin-publish") version "0.9.8"
+    id("com.gradle.plugin-publish") version "0.9.10"
 }
 
 repositories {
     jcenter()
 }
 
-val kotlinVersion = "1.2.20"
+val kotlinVersion = "1.2.21"
 val junitPlatformVersion = "1.0.0"
 val spekVersion = "1.1.5"
 
@@ -61,8 +61,9 @@ dependencies {
 }
 
 buildScan {
-    setLicenseAgreementUrl("https://gradle.com/terms-of-service")
-    setLicenseAgree("yes")
+    setTermsOfServiceUrl("https://gradle.com/terms-of-service")
+    setTermsOfServiceAgree("yes")
+    setServer("https://e.grdev.net")
 
     publishAlways()
 }
