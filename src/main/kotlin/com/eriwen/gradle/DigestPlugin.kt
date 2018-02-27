@@ -42,13 +42,13 @@ open class Digest : SourceTask() {
     private fun processChanges(sourceTree: FileTree) {
         sourceTree.visit(object : FileVisitor {
             override fun visitDir(visitDetails: FileVisitDetails) {
-                visitDetails.relativePath.getFile(dest).mkdir()
+                visitDetails.relativePath.getFile(dest!!).mkdir()
             }
 
             override fun visitFile(visitDetails: FileVisitDetails) {
                 try {
                     val checksum = digest(visitDetails.file, DigestAlgorithm.valueOf(algorithm))
-                    val destFile = visitDetails.relativePath.getFile(dest)
+                    val destFile = visitDetails.relativePath.getFile(dest!!)
                     visitDetails.copyTo(digestedFile(destFile, checksum))
                     Files.write(checksumFile(destFile, DigestAlgorithm.valueOf(algorithm)).toPath(), checksum.toByteArray())
                 } catch (e: IOException) {
