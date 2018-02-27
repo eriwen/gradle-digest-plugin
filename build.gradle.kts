@@ -34,7 +34,7 @@ repositories {
 }
 
 val kotlinVersion = "1.2.21"
-val junitPlatformVersion = "1.0.0"
+val junitPlatformVersion = "1.1.0"
 val spekVersion = "1.1.5"
 
 dependencies {
@@ -49,9 +49,12 @@ dependencies {
 
     testRuntimeOnly("org.jetbrains.spek:spek-junit-platform-engine:$spekVersion") {
         exclude(group = "org.jetbrains.kotlin")
-        exclude("org.junit.platform")
+        exclude(group = "org.junit.platform")
     }
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:$junitPlatformVersion")
+
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:$junitPlatformVersion") {
+        because("Needed to run tests IDEs that bundle an older version")
+    }
 }
 
 buildScan {
