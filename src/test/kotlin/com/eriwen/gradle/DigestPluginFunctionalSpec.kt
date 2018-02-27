@@ -31,10 +31,10 @@ class DigestPluginFunctionalSpec : Spek({
                 }
             """)
 
-            fun execute(arguments: String, projectDir: TemporaryFolder): BuildResult {
+            fun execute(projectDir: TemporaryFolder, vararg arguments: String): BuildResult {
                 return GradleRunner.create()
                         .withProjectDir(projectDir.root)
-                        .withArguments(arguments)
+                        .withArguments(arguments.toList())
                         .withPluginClasspath()
                         .build()
             }
@@ -46,7 +46,7 @@ class DigestPluginFunctionalSpec : Spek({
                 testProjectDir.newFile("foo/bar/baz.js").writeText("baz")
 
                 it("hashes files using MD5 algorithm by default") {
-                    val buildResult: BuildResult = execute("digest", testProjectDir)
+                    val buildResult: BuildResult = execute(testProjectDir, "digest")
 
                     assertEquals(TaskOutcome.SUCCESS, buildResult.task(":digest")!!.outcome)
                     assertEquals(jsContent, File("$projectPath/build/${DigestUtils.md5Hex(jsContent)}-file.js").readText())
@@ -54,6 +54,13 @@ class DigestPluginFunctionalSpec : Spek({
 
                     // ... it maintains source directory structure
                     assertTrue(File("$projectPath/build/bar/baz.js.md5").exists())
+                }
+
+                it("allows algorithm to be configured on CLI") {
+                    val buildResult: BuildResult = execute(testProjectDir, "digest", "--algorithm=SHA1")
+
+                    assertEquals(TaskOutcome.SUCCESS, buildResult.task(":digest")!!.outcome)
+                    assertTrue(File("$projectPath/build/file.js.sha1").exists())
                 }
             }
 
@@ -70,7 +77,7 @@ class DigestPluginFunctionalSpec : Spek({
                 """)
 
                 it("uses desired algorithm if available") {
-                    val buildResult: BuildResult = execute("digestSha1", testProjectDir)
+                    val buildResult: BuildResult = execute(testProjectDir, "digestSha1")
 
                     assertEquals(TaskOutcome.SUCCESS, buildResult.task(":digestSha1")!!.outcome)
                     assertTrue(File("$projectPath/build/a.js.sha1").exists())

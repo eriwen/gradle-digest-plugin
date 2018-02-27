@@ -10,6 +10,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.options.Option
 import java.io.File
 import java.io.IOException
 import java.lang.RuntimeException
@@ -20,6 +21,7 @@ open class DigestPlugin : Plugin<Project> {
 }
 
 open class Digest : SourceTask() {
+    @Option(option = "algorithm", description = "Digest algorithm: MD5, SHA1, SHA256, or SHA512")
     @Input
     var algorithm: String = DigestAlgorithm.MD5.toString()
 
