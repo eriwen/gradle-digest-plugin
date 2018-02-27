@@ -5,22 +5,16 @@ import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.junit.platform.console.options.Details
-import org.junit.platform.gradle.plugin.EnginesExtension
-import org.junit.platform.gradle.plugin.FiltersExtension
-import org.junit.platform.gradle.plugin.JUnitPlatformExtension
 
 buildscript {
     repositories {
         jcenter()
     }
     dependencies {
-        classpath("org.junit.platform:junit-platform-gradle-plugin:1.0.0")
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.9.15")
     }
 }
 apply {
-    plugin("org.junit.platform.gradle.plugin")
     plugin("org.jetbrains.dokka")
 }
 
@@ -103,27 +97,9 @@ val jar by tasks.getting(Jar::class) {
     }
 }
 
-configure<JUnitPlatformExtension> {
-    platformVersion = junitPlatformVersion
-    details = Details.TREE
-    filters {
-        engines {
-            include("spek")
-        }
-    }
-}
-
-fun JUnitPlatformExtension.filters(setup: FiltersExtension.() -> Unit) {
-    when (this) {
-        is ExtensionAware -> extensions.getByType(FiltersExtension::class.java).setup()
-        else -> throw Exception("${this::class} must be an instance of ExtensionAware")
-    }
-}
-
-fun FiltersExtension.engines(setup: EnginesExtension.() -> Unit) {
-    when (this) {
-        is ExtensionAware -> extensions.getByType(EnginesExtension::class.java).setup()
-        else -> throw Exception("${this::class} must be an instance of ExtensionAware")
+val test by tasks.getting(Test::class) {
+    useJUnitPlatform {
+        includeEngines("spek")
     }
 }
 
