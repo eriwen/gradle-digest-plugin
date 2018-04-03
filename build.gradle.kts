@@ -6,34 +6,23 @@ import org.gradle.kotlin.dsl.*
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.9.16")
-    }
-}
-apply {
-    plugin("org.jetbrains.dokka")
-}
-
 group = "com.eriwen"
 version = "0.0.3"
 
 plugins {
-    id("com.gradle.build-scan") version "1.12.1"
-    kotlin("jvm") version "1.2.30"
+    id("com.gradle.build-scan") version "1.13"
+    kotlin("jvm") version "1.2.31"
     `java-gradle-plugin`
     `maven-publish`
     id("com.gradle.plugin-publish") version "0.9.10"
+    id("org.jetbrains.dokka") version "0.9.16"
 }
 
 repositories {
     jcenter()
 }
 
-val kotlinVersion = "1.2.30"
+val kotlinVersion = "1.2.31"
 val junitPlatformVersion = "1.1.0"
 val spekVersion = "1.1.5"
 
