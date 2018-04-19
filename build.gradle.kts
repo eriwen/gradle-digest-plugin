@@ -10,8 +10,8 @@ group = "com.eriwen"
 version = "0.0.3"
 
 plugins {
-    id("com.gradle.build-scan") version "1.13"
-    kotlin("jvm") version "1.2.31"
+    id("com.gradle.build-scan") version "1.13.1"
+    kotlin("jvm") version "1.2.40"
     `java-gradle-plugin`
     `maven-publish`
     id("com.gradle.plugin-publish") version "0.9.10"
