@@ -22,7 +22,7 @@ repositories {
     jcenter()
 }
 
-val kotlinVersion = "1.2.31"
+val kotlinVersion = "1.2.40"
 val junitPlatformVersion = "1.1.0"
 val spekVersion = "1.1.5"
 
