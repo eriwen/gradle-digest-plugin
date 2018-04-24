@@ -27,7 +27,7 @@ val junitPlatformVersion = "1.1.0"
 val spekVersion = "1.1.5"
 
 dependencies {
-    implementation(kotlin("stdlib-jre8", kotlinVersion))
+    implementation(kotlin("stdlib-jdk8", kotlinVersion))
     implementation("commons-codec:commons-codec:1.10")
 
     testImplementation(kotlin("reflect", kotlinVersion))
