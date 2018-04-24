@@ -93,6 +93,10 @@ val test by tasks.getting(Test::class) {
     useJUnitPlatform {
         includeEngines("spek")
     }
+
+    testLogging {
+        events("PASSED", "FAILED", "SKIPPED")
+    }
 }
 
 gradlePlugin {
