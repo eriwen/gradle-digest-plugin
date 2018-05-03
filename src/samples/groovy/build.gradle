@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+    id "com.eriwen.gradle.js" version "2.14.1"
+    id 'com.github.gradle-guides.site' version '0.1'
+}
+
+group = "com.eriwen"
+version = "0.0.3"
+description = "Digest sources to allow identification of files by their content"
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
+ext {
+    websiteUrl = "https://github.com/eriwen/gradle-digest-plugin"
+    vcsUrl = "https://github.com/eriwen/gradle-digest-plugin"
+}
+
+//task digest(type: com.eriwen.gradle.Digest) {
+//    source "$projectDir/js"
+//    dest "$projectDir/build"
+//    algorithm = "SHA1"
+//}
+
+site {
+    outputDir = file("$rootDir/docs")
+    websiteUrl = websiteUrl
+    vcsUrl = vcsUrl
+}

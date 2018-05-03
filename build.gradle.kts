@@ -8,21 +8,25 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "com.eriwen"
 version = "0.0.3"
+description = "Digest sources to allow identification of files by their content"
+val websiteUrl by extra { "https://github.com/eriwen/gradle-digest-plugin" }
+val vcsUrl by extra { "https://github.com/eriwen/gradle-digest-plugin" }
 
 plugins {
     id("com.gradle.build-scan") version "1.13.1"
-    kotlin("jvm") version "1.2.40"
+    kotlin("jvm") version "1.2.41"
     `java-gradle-plugin`
     `maven-publish`
     id("com.gradle.plugin-publish") version "0.9.10"
     id("org.jetbrains.dokka") version "0.9.16"
+    id("com.github.gradle-guides.site") version "0.1"
 }
 
 repositories {
     jcenter()
 }
 
-val kotlinVersion = "1.2.40"
+val kotlinVersion = "1.2.41"
 val junitPlatformVersion = "1.1.0"
 val spekVersion = "1.1.5"
 
@@ -109,9 +113,9 @@ gradlePlugin {
 }
 
 pluginBundle {
-    website = "https://github.com/eriwen/gradle-digest-plugin"
-    vcsUrl = "https://github.com/eriwen/gradle-digest-plugin"
-    description = "Digest sources to allow identification of files by their content"
+    website = websiteUrl
+    vcsUrl = vcsUrl
+    description = project.description
     tags = listOf("asset-versioning", "caching", "md5", "sha256", "sha512")
 
     (plugins) {
@@ -120,6 +124,13 @@ pluginBundle {
             displayName = "Gradle Digest Plugin"
         }
     }
+}
+
+site {
+    // This allows it to be picked up by GitHub Pages
+    outputDir = file("$rootDir/docs")
+    websiteUrl = websiteUrl
+    vcsUrl = vcsUrl
 }
 
 publishing {
