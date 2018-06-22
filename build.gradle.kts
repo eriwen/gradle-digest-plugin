@@ -14,7 +14,7 @@ val vcsUrl by extra { "https://github.com/eriwen/gradle-digest-plugin" }
 
 plugins {
     id("com.gradle.build-scan") version "1.13.1"
-    kotlin("jvm") version "1.2.41"
+    kotlin("jvm") version "1.2.50"
     `java-gradle-plugin`
     `maven-publish`
     id("com.gradle.plugin-publish") version "0.9.10"
@@ -26,7 +26,7 @@ repositories {
     jcenter()
 }
 
-val kotlinVersion = "1.2.41"
+val kotlinVersion = "1.2.50"
 val junitPlatformVersion = "1.1.0"
 val spekVersion = "1.1.5"
 
@@ -48,6 +48,10 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:$junitPlatformVersion") {
         because("Needed to run tests IDEs that bundle an older version")
     }
+}
+
+dependencyLocking {
+    lockAllConfigurations()
 }
 
 buildScan {
@@ -139,28 +143,33 @@ publishing {
         artifact(dokkaJar)
         artifact(sourcesJar)
 
-        pom.withXml {
-            val root = asNode()
-            root.appendNode("name", "Gradle Digest plugin")
-            root.appendNode("description", "Gradle plugin for digesting source files.")
-            root.appendNode("url", "https://github.com/eriwen/gradle-digest-plugin")
-            root.appendNode("inceptionYear", "2016")
+        pom {
+            name.set("Gradle Digest plugin")
+            description.set("Gradle plugin for digesting source files.")
+            url.set("https://github.com/eriwen/gradle-digest-plugin")
+            inceptionYear.set("2016")
 
-            val scm = root.appendNode("scm")
-            scm.appendNode("url", "https://github.com/eriwen/gradle-digest-plugin")
-            scm.appendNode("connection", "scm:https://eriwen@github.com/eriwen/gradle-digest-plugin.git")
-            scm.appendNode("developerConnection", "scm:git://github.com/eriwen/gradle-digest-plugin.git")
+            scm {
+                url.set("https://github.com/eriwen/gradle-digest-plugin")
+                connection.set("scm:https://eriwen@github.com/eriwen/gradle-digest-plugin.git")
+                developerConnection.set("scm:git://github.com/eriwen/gradle-digest-plugin.git")
+            }
 
-            val license = root.appendNode("licenses").appendNode("license")
-            license.appendNode("name", "The Apache Software License, Version 2.0")
-            license.appendNode("url", "http://www.apache.org/licenses/LICENSE-2.0.txt")
-            license.appendNode("distribution", "repo")
+            licenses {
+                license {
+                    name.set("The Apache Software License, Version 2.0")
+                    url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    distribution.set("repo")
+                }
+            }
 
-            val developers = root.appendNode("developers")
-            val developer = developers.appendNode("developer")
-            developer.appendNode("id", "eriwen")
-            developer.appendNode("name", "Eric Wendelin")
-            developer.appendNode("email", "me@eriwen.com")
+            developers {
+                developer {
+                    id.set("eriwen")
+                    name.set("Eric Wendelin")
+                    email.set("me@eriwen.com")
+                }
+            }
         }
     }
 }
