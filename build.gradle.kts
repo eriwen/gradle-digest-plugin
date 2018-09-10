@@ -13,8 +13,8 @@ val websiteUrl by extra { "https://github.com/eriwen/gradle-digest-plugin" }
 val vcsUrl by extra { "https://github.com/eriwen/gradle-digest-plugin" }
 
 plugins {
-    id("com.gradle.build-scan") version "1.13.1"
-    kotlin("jvm") version "1.2.50"
+    id("com.gradle.build-scan") version "1.16"
+    kotlin("jvm") version "1.2.61"
     `java-gradle-plugin`
     `maven-publish`
     id("com.gradle.plugin-publish") version "0.9.10"
@@ -26,7 +26,7 @@ repositories {
     jcenter()
 }
 
-val kotlinVersion = "1.2.50"
+val kotlinVersion = "1.2.61"
 val junitPlatformVersion = "1.1.0"
 val spekVersion = "1.1.5"
 
@@ -83,7 +83,7 @@ val sourcesJar by tasks.creating(Jar::class) {
     group = JavaBasePlugin.DOCUMENTATION_GROUP
     description = "Assembles sources JAR"
     classifier = "sources"
-    from(java.sourceSets.getByName("main").allSource)
+    from(sourceSets.getByName("main").allSource)
 }
 artifacts.add("archives", sourcesJar)
 
@@ -108,8 +108,8 @@ val test by tasks.getting(Test::class) {
 }
 
 gradlePlugin {
-    (plugins) {
-        "digest" {
+    plugins {
+        create("digest") {
             id = "com.eriwen.gradle.digest"
             implementationClass = "com.eriwen.gradle.DigestPlugin"
         }
@@ -122,8 +122,8 @@ pluginBundle {
     description = project.description
     tags = listOf("asset-versioning", "caching", "md5", "sha256", "sha512")
 
-    (plugins) {
-        "digest" {
+    plugins {
+        create("digest") {
             id = "com.eriwen.gradle.digest"
             displayName = "Gradle Digest Plugin"
         }
