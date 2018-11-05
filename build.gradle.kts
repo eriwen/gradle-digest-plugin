@@ -13,20 +13,20 @@ val websiteUrl by extra { "https://github.com/eriwen/gradle-digest-plugin" }
 val vcsUrl by extra { "https://github.com/eriwen/gradle-digest-plugin" }
 
 plugins {
-    id("com.gradle.build-scan") version "1.16"
-    kotlin("jvm") version "1.2.61"
+    id("com.gradle.build-scan") version "2.0.1"
+    kotlin("jvm") version "1.3.0"
     `java-gradle-plugin`
     `maven-publish`
     id("com.gradle.plugin-publish") version "0.9.10"
     id("org.jetbrains.dokka") version "0.9.16"
-    id("com.github.gradle-guides.site") version "0.1"
+//    id("com.github.gradle-guides.site") version "0.1"
 }
 
 repositories {
     jcenter()
 }
 
-val kotlinVersion = "1.2.61"
+val kotlinVersion = "1.3.0"
 val junitPlatformVersion = "1.1.0"
 val spekVersion = "1.1.5"
 
@@ -130,12 +130,12 @@ pluginBundle {
     }
 }
 
-site {
-    // This allows it to be picked up by GitHub Pages
-    outputDir = file("$rootDir/docs")
-    websiteUrl = websiteUrl
-    vcsUrl = vcsUrl
-}
+//site {
+//    // This allows it to be picked up by GitHub Pages
+//    outputDir = file("$rootDir/docs")
+//    websiteUrl = websiteUrl
+//    vcsUrl = vcsUrl
+//}
 
 publishing {
     publications.create("mavenJava", MavenPublication::class.java) {
