@@ -14,8 +14,8 @@ val githubUrl by extra { "https://github.com/eriwen/gradle-digest-plugin" }
 
 plugins {
     `build-scan`
-    kotlin("jvm") version "1.3.10"
     `java-gradle-plugin`
+    `kotlin-dsl`
     `maven-publish`
     id("com.gradle.plugin-publish") version "0.10.0"
     id("org.jetbrains.dokka") version "0.9.17"
@@ -26,15 +26,13 @@ repositories {
     jcenter()
 }
 
-val kotlinVersion = "1.3.10"
+val kotlinVersion = "1.3.11"
 val junitPlatformVersion = "1.1.0"
 val spekVersion = "1.1.5"
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8", kotlinVersion))
     implementation("commons-codec:commons-codec:1.10")
 
-    testImplementation(kotlin("reflect", kotlinVersion))
     testImplementation(kotlin("test", kotlinVersion))
     testImplementation("org.jetbrains.spek:spek-api:$spekVersion") {
         exclude(group = "org.jetbrains.kotlin")
@@ -48,10 +46,6 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:$junitPlatformVersion") {
         because("Needed to run tests IDEs that bundle an older version")
     }
-}
-
-dependencyLocking {
-    lockAllConfigurations()
 }
 
 buildScan {
