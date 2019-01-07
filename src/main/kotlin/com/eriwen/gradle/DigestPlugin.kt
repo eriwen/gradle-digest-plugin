@@ -13,11 +13,10 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import java.io.File
 import java.io.IOException
-import java.lang.RuntimeException
 import java.nio.file.Files
 
 open class DigestPlugin : Plugin<Project> {
-    override fun apply(p0: Project?) {}
+    override fun apply(target: Project) {}
 }
 
 open class Digest : SourceTask() {
